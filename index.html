@@ -1,760 +1,676 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Duffs Studio — Custom App Development, New Zealand</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --black:   #0A0A0A;
-      --white:   #FFFFFF;
-      --grey:    #6B6B6B;
-      --light:   #F5F5F7;
-      --border:  #E0E0E0;
-      --blue:    #0066CC;
-      --blue-lt: #EBF3FB;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-      background: var(--white);
-      color: var(--black);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* NAV */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 48px;
-      height: 64px;
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: saturate(180%) blur(20px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-logo {
-      font-size: 17px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      color: var(--black);
-      text-decoration: none;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 32px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      font-size: 14px;
-      color: var(--grey);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--black); }
-
-    .nav-cta {
-      background: var(--black);
-      color: var(--white) !important;
-      padding: 8px 18px;
-      border-radius: 980px;
-      font-size: 14px !important;
-      font-weight: 500;
-      transition: background 0.2s !important;
-    }
-
-    .nav-cta:hover { background: #333 !important; color: var(--white) !important; }
-
-    /* HERO */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 120px 24px 80px;
-    }
-
-    .hero-eyebrow {
-      display: inline-block;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: 24px;
-    }
-
-    .hero h1 {
-      font-size: clamp(44px, 7vw, 88px);
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 1.05;
-      max-width: 820px;
-      margin-bottom: 28px;
-    }
-
-    .hero h1 .animated-word {
-      background: linear-gradient(90deg, #0066CC, #34C759, #FF6B00, #0066CC);
-      background-size: 300% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: shimmer 6s linear infinite;
-    }
-
-    @keyframes shimmer {
-      0%   { background-position: 0% center; }
-      100% { background-position: 300% center; }
-    }
-
-    .hero p {
-      font-size: clamp(18px, 2.2vw, 22px);
-      color: var(--grey);
-      max-width: 560px;
-      line-height: 1.55;
-      margin-bottom: 44px;
-      font-weight: 400;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .btn-primary {
-      background: var(--black);
-      color: var(--white);
-      padding: 14px 28px;
-      border-radius: 980px;
-      font-size: 16px;
-      font-weight: 500;
-      text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
-    }
-
-    .btn-primary:hover { background: #333; transform: translateY(-1px); }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--blue);
-      padding: 14px 28px;
-      border-radius: 980px;
-      font-size: 16px;
-      font-weight: 500;
-      text-decoration: none;
-      border: 1.5px solid var(--blue);
-      transition: background 0.2s, transform 0.15s;
-    }
-
-    .btn-secondary:hover { background: var(--blue-lt); transform: translateY(-1px); }
-
-    .hero-scroll {
-      margin-top: 72px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      color: var(--border);
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .scroll-line {
-      width: 1px;
-      height: 48px;
-      background: linear-gradient(to bottom, var(--border), transparent);
-    }
-
-    /* SECTION WRAPPER */
-    section {
-      padding: 100px 24px;
-    }
-
-    .container {
-      max-width: 1040px;
-      margin: 0 auto;
-    }
-
-    .section-eyebrow {
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: 16px;
-    }
-
-    .section-title {
-      font-size: clamp(32px, 4vw, 52px);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-      margin-bottom: 20px;
-    }
-
-    .section-sub {
-      font-size: 18px;
-      color: var(--grey);
-      line-height: 1.6;
-      max-width: 560px;
-    }
-
-    /* WHAT I DO */
-    #services { background: var(--white); }
-
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2px;
-      margin-top: 64px;
-      border: 2px solid var(--border);
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .service-card {
-      padding: 44px 40px;
-      background: var(--white);
-      transition: background 0.2s;
-    }
-
-    .service-card:hover { background: var(--light); }
-
-    .service-icon {
-      width: 44px;
-      height: 44px;
-      background: var(--blue-lt);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-      font-size: 20px;
-    }
-
-    .service-card h3 {
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      margin-bottom: 12px;
-    }
-
-    .service-card p {
-      font-size: 15px;
-      color: var(--grey);
-      line-height: 1.6;
-    }
-
-    /* HOW I WORK */
-    #process { background: var(--light); }
-
-    .process-steps {
-      margin-top: 64px;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .process-step {
-      display: grid;
-      grid-template-columns: 64px 1fr;
-      gap: 32px;
-      padding: 40px 0;
-      border-bottom: 1px solid var(--border);
-      align-items: start;
-    }
-
-    .process-step:last-child { border-bottom: none; }
-
-    .step-num {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--blue);
-      letter-spacing: 0.05em;
-      padding-top: 4px;
-    }
-
-    .step-content h3 {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      margin-bottom: 10px;
-    }
-
-    .step-content p {
-      font-size: 15px;
-      color: var(--grey);
-      line-height: 1.65;
-      max-width: 560px;
-    }
-
-    /* WORK */
-    #work { background: var(--white); }
-
-    .work-cards {
-      margin-top: 64px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .work-card {
-      background: var(--light);
-      border-radius: 20px;
-      padding: 56px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: center;
-    }
-
-    .work-tag {
-      display: inline-block;
-      background: var(--blue-lt);
-      color: var(--blue);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 5px 12px;
-      border-radius: 980px;
-      margin-bottom: 20px;
-    }
-
-    .work-card h3 {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 16px;
-      line-height: 1.2;
-    }
-
-    .work-card p {
-      font-size: 16px;
-      color: var(--grey);
-      line-height: 1.65;
-      margin-bottom: 28px;
-    }
-
-    .work-outcome {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .outcome-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      color: var(--black);
-      font-weight: 500;
-    }
-
-    .outcome-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--blue);
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .work-visual {
-      background: var(--white);
-      border-radius: 16px;
-      height: 280px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      border: 1px solid var(--border);
-      padding: 32px;
-    }
-
-    .mock-bar {
-      width: 100%;
-      height: 8px;
-      background: var(--border);
-      border-radius: 4px;
-    }
-
-    .mock-bar.blue { background: var(--blue); width: 65%; }
-    .mock-bar.short { width: 40%; }
-    .mock-bar.mid { width: 80%; }
-
-    .mock-card {
-      width: 100%;
-      background: var(--light);
-      border-radius: 10px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    /* COMING SOON */
-    #saas {
-      background: var(--black);
-      color: var(--white);
-    }
-
-    #saas .section-eyebrow { color: #34C759; }
-    #saas .section-title { color: var(--white); }
-    #saas .section-sub { color: #999; }
-
-    .saas-cards {
-      margin-top: 64px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-    }
-
-    .saas-card {
-      background: #161616;
-      border: 1px solid #2a2a2a;
-      border-radius: 16px;
-      padding: 36px 32px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .saas-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--blue), #34C759);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .saas-card:hover::before { opacity: 1; }
-
-    .saas-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #555;
-      margin-bottom: 16px;
-    }
-
-    .saas-card h3 {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--white);
-      margin-bottom: 12px;
-      letter-spacing: -0.02em;
-    }
-
-    .saas-card p {
-      font-size: 14px;
-      color: #777;
-      line-height: 1.6;
-    }
-
-    /* CONTACT */
-    #contact { background: var(--white); }
-
-    .contact-box {
-      margin-top: 64px;
-      background: var(--light);
-      border-radius: 24px;
-      padding: 72px 64px;
-      text-align: center;
-    }
-
-    .contact-box h2 {
-      font-size: clamp(32px, 4vw, 48px);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 16px;
-    }
-
-    .contact-box p {
-      font-size: 18px;
-      color: var(--grey);
-      margin-bottom: 40px;
-      line-height: 1.6;
-    }
-
-    .contact-email {
-      display: inline-block;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--blue);
-      text-decoration: none;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.2s;
-      margin-bottom: 40px;
-    }
-
-    .contact-email:hover { border-color: var(--blue); }
-
-    /* FOOTER */
-    footer {
-      padding: 40px 48px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    footer p {
-      font-size: 13px;
-      color: var(--grey);
-    }
-
-    footer a {
-      font-size: 13px;
-      color: var(--grey);
-      text-decoration: none;
-    }
-
-    footer a:hover { color: var(--black); }
-
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-      nav { padding: 0 20px; }
-      .nav-links { display: none; }
-      section { padding: 72px 20px; }
-      .work-card { grid-template-columns: 1fr; gap: 32px; padding: 36px 28px; }
-      .work-visual { height: 200px; }
-      .contact-box { padding: 48px 28px; }
-      footer { flex-direction: column; gap: 12px; text-align: center; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .hero h1 .animated-word { animation: none; background: var(--blue); }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Solvo — Custom App Development, New Zealand</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+--black: #0A0A0A;
+--white: #FFFFFF;
+--grey: #6B6B6B;
+--light: #F5F5F7;
+--border: #E0E0E0;
+--blue: #0066CC;
+--blue-lt: #EBF3FB;
+}
+html { scroll-behavior: smooth; }
+body {
+font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+background: var(--white);
+color: var(--black);
+-webkit-font-smoothing: antialiased;
+}
+/* NAV */
+nav {
+position: fixed;
+top: 0; left: 0; right: 0;
+z-index: 100;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 48px;
+height: 64px;
+background: rgba(255,255,255,0.85);
+backdrop-filter: saturate(180%) blur(20px);
+border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+font-size: 17px;
+font-weight: 600;
+letter-spacing: -0.3px;
+color: var(--black);
+text-decoration: none;
+}
+.nav-links {
+display: flex;
+gap: 32px;
+list-style: none;
+}
+.nav-links a {
+font-size: 14px;
+color: var(--grey);
+text-decoration: none;
+transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--black); }
+.nav-cta {
+background: var(--black);
+color: var(--white) !important;
+padding: 8px 18px;
+border-radius: 980px;
+font-size: 14px !important;
+font-weight: 500;
+transition: background 0.2s !important;
+}
+.nav-cta:hover { background: #333 !important; color: var(--white) !important; }
+/* HERO */
+.hero {
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+padding: 120px 24px 80px;
+}
+.hero-eyebrow {
+display: inline-block;
+font-size: 13px;
+font-weight: 500;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+color: var(--blue);
+margin-bottom: 24px;
+}
+.hero h1 {
+font-size: clamp(44px, 7vw, 88px);
+font-weight: 700;
+letter-spacing: -0.04em;
+line-height: 1.05;
+max-width: 820px;
+margin-bottom: 28px;
+}
+.hero h1 .animated-word {
+background: linear-gradient(90deg, #0066CC, #34C759, #FF6B00, #0066CC);
+background-size: 300% auto;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+animation: shimmer 6s linear infinite;
+}
+@keyframes shimmer {
+0% { background-position: 0% center; }
+100% { background-position: 300% center; }
+}
+.hero p {
+font-size: clamp(18px, 2.2vw, 22px);
+color: var(--grey);
+max-width: 560px;
+line-height: 1.55;
+margin-bottom: 44px;
+font-weight: 400;
+}
+.hero-actions {
+display: flex;
+gap: 16px;
+flex-wrap: wrap;
+justify-content: center;
+}
+.btn-primary {
+background: var(--black);
+color: var(--white);
+padding: 14px 28px;
+border-radius: 980px;
+font-size: 16px;
+font-weight: 500;
+text-decoration: none;
+transition: background 0.2s, transform 0.15s;
+}
+.btn-primary:hover { background: #333; transform: translateY(-1px); }
+.btn-secondary {
+background: transparent;
+color: var(--blue);
+padding: 14px 28px;
+border-radius: 980px;
+font-size: 16px;
+font-weight: 500;
+text-decoration: none;
+border: 1.5px solid var(--blue);
+transition: background 0.2s, transform 0.15s;
+}
+.btn-secondary:hover { background: var(--blue-lt); transform: translateY(-1px); }
+.hero-scroll {
+margin-top: 72px;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 8px;
+color: var(--border);
+font-size: 12px;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+}
+.scroll-line {
+width: 1px;
+height: 48px;
+background: linear-gradient(to bottom, var(--border), transparent);
+}
+/* SECTION WRAPPER */
+section {
+padding: 100px 24px;
+}
+.container {
+max-width: 1040px;
+margin: 0 auto;
+}
+.section-eyebrow {
+font-size: 13px;
+font-weight: 500;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+color: var(--blue);
+margin-bottom: 16px;
+}
+.section-title {
+font-size: clamp(32px, 4vw, 52px);
+font-weight: 700;
+letter-spacing: -0.03em;
+line-height: 1.1;
+margin-bottom: 20px;
+}
+.section-sub {
+font-size: 18px;
+color: var(--grey);
+line-height: 1.6;
+max-width: 560px;
+}
+/* WHAT I DO */
+#services { background: var(--white); }
+.services-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 2px;
+margin-top: 64px;
+border: 2px solid var(--border);
+border-radius: 20px;
+overflow: hidden;
+}
+.service-card {
+padding: 44px 40px;
+background: var(--white);
+transition: background 0.2s;
+}
+.service-card:hover { background: var(--light); }
+.service-icon {
+width: 44px;
+height: 44px;
+background: var(--blue-lt);
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+margin-bottom: 20px;
+font-size: 20px;
+}
+.service-card h3 {
+font-size: 20px;
+font-weight: 600;
+letter-spacing: -0.02em;
+margin-bottom: 12px;
+}
+.service-card p {
+font-size: 15px;
+color: var(--grey);
+line-height: 1.6;
+}
+/* HOW I WORK */
+#process { background: var(--light); }
+.process-steps {
+margin-top: 64px;
+display: flex;
+flex-direction: column;
+gap: 0;
+}
+.process-step {
+display: grid;
+grid-template-columns: 64px 1fr;
+gap: 32px;
+padding: 40px 0;
+border-bottom: 1px solid var(--border);
+align-items: start;
+}
+.process-step:last-child { border-bottom: none; }
+.step-num {
+font-size: 13px;
+font-weight: 600;
+color: var(--blue);
+letter-spacing: 0.05em;
+padding-top: 4px;
+}
+.step-content h3 {
+font-size: 22px;
+font-weight: 600;
+letter-spacing: -0.02em;
+margin-bottom: 10px;
+}
+.step-content p {
+font-size: 15px;
+color: var(--grey);
+line-height: 1.65;
+max-width: 560px;
+}
+/* WORK */
+#work { background: var(--white); }
+.work-cards {
+margin-top: 64px;
+display: flex;
+flex-direction: column;
+gap: 24px;
+}
+.work-card {
+background: var(--light);
+border-radius: 20px;
+padding: 56px;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 64px;
+align-items: center;
+}
+.work-tag {
+display: inline-block;
+background: var(--blue-lt);
+color: var(--blue);
+font-size: 12px;
+font-weight: 600;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+padding: 5px 12px;
+border-radius: 980px;
+margin-bottom: 20px;
+}
+.work-card h3 {
+font-size: 28px;
+font-weight: 700;
+letter-spacing: -0.03em;
+margin-bottom: 16px;
+line-height: 1.2;
+}
+.work-card p {
+font-size: 16px;
+color: var(--grey);
+line-height: 1.65;
+margin-bottom: 28px;
+}
+.work-outcome {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+.outcome-item {
+display: flex;
+align-items: center;
+gap: 10px;
+font-size: 14px;
+color: var(--black);
+font-weight: 500;
+}
+.outcome-dot {
+width: 6px;
+height: 6px;
+background: var(--blue);
+border-radius: 50%;
+flex-shrink: 0;
+}
+.work-visual {
+background: var(--white);
+border-radius: 16px;
+height: 280px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 16px;
+border: 1px solid var(--border);
+padding: 32px;
+}
+.mock-bar {
+width: 100%;
+height: 8px;
+background: var(--border);
+border-radius: 4px;
+}
+.mock-bar.blue { background: var(--blue); width: 65%; }
+.mock-bar.short { width: 40%; }
+.mock-bar.mid { width: 80%; }
+.mock-card {
+width: 100%;
+background: var(--light);
+border-radius: 10px;
+padding: 16px;
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+/* COMING SOON */
+#saas {
+background: var(--black);
+color: var(--white);
+}
+#saas .section-eyebrow { color: #34C759; }
+#saas .section-title { color: var(--white); }
+#saas .section-sub { color: #999; }
+.saas-cards {
+margin-top: 64px;
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+gap: 16px;
+}
+.saas-card {
+background: #161616;
+border: 1px solid #2a2a2a;
+border-radius: 16px;
+padding: 36px 32px;
+position: relative;
+overflow: hidden;
+}
+.saas-card::before {
+content: '';
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(--blue), #34C759);
+opacity: 0;
+transition: opacity 0.3s;
+}
+.saas-card:hover::before { opacity: 1; }
+.saas-label {
+font-size: 11px;
+font-weight: 600;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: #555;
+margin-bottom: 16px;
+}
+.saas-card h3 {
+font-size: 20px;
+font-weight: 600;
+color: var(--white);
+margin-bottom: 12px;
+letter-spacing: -0.02em;
+}
+.saas-card p {
+font-size: 14px;
+color: #777;
+line-height: 1.6;
+}
+/* CONTACT */
+#contact { background: var(--white); }
+.contact-box {
+margin-top: 64px;
+background: var(--light);
+border-radius: 24px;
+padding: 72px 64px;
+text-align: center;
+}
+.contact-box h2 {
+font-size: clamp(32px, 4vw, 48px);
+font-weight: 700;
+letter-spacing: -0.03em;
+margin-bottom: 16px;
+}
+.contact-box p {
+font-size: 18px;
+color: var(--grey);
+margin-bottom: 40px;
+line-height: 1.6;
+}
+.contact-email {
+display: inline-block;
+font-size: 20px;
+font-weight: 600;
+color: var(--blue);
+text-decoration: none;
+border-bottom: 2px solid transparent;
+transition: border-color 0.2s;
+margin-bottom: 40px;
+}
+.contact-email:hover { border-color: var(--blue); }
+/* FOOTER */
+footer {
+padding: 40px 48px;
+border-top: 1px solid var(--border);
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+footer p {
+font-size: 13px;
+color: var(--grey);
+}
+footer a {
+font-size: 13px;
+color: var(--grey);
+text-decoration: none;
+}
+footer a:hover { color: var(--black); }
+/* RESPONSIVE */
+@media (max-width: 768px) {
+nav { padding: 0 20px; }
+.nav-links { display: none; }
+section { padding: 72px 20px; }
+.work-card { grid-template-columns: 1fr; gap: 32px; padding: 36px 28px; }
+.work-visual { height: 200px; }
+.contact-box { padding: 48px 28px; }
+footer { flex-direction: column; gap: 12px; text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+.hero h1 .animated-word { animation: none; background: var(--blue); }
+}
+</style>
 </head>
 <body>
+<!-- NAV -->
+<nav>
+<a href="#" class="nav-logo">Solvo</a>
+<ul class="nav-links">
+<li><a href="#services">Services</a></li>
+<li><a href="#work">Work</a></li>
+<li><a href="#saas">Coming Soon</a></li>
+<li><a href="#contact" class="nav-cta">Get in touch</a></li>
+</ul>
+</nav>
 
-  <!-- NAV -->
-  <nav>
-    <a href="#" class="nav-logo">Duffs Studio</a>
-    <ul class="nav-links">
-      <li><a href="#services">Services</a></li>
-      <li><a href="#work">Work</a></li>
-      <li><a href="#saas">Coming Soon</a></li>
-      <li><a href="#contact" class="nav-cta">Get in touch</a></li>
-    </ul>
-  </nav>
+<!-- HERO -->
+<section class="hero">
+<span class="hero-eyebrow">Based in New Zealand</span>
+<h1>Apps built to<br><span class="animated-word">work harder</span><br>for your business.</h1>
+<p>Custom internal tools and web apps that help growing organisations run smoother, move faster, and do more of what matters.</p>
+<div class="hero-actions">
+<a href="#contact" class="btn-primary">Start a conversation</a>
+<a href="#work" class="btn-secondary">See my work</a>
+</div>
+<div class="hero-scroll">
+<div class="scroll-line"></div>
+</div>
+</section>
 
-  <!-- HERO -->
-  <section class="hero">
-    <span class="hero-eyebrow">Based in New Zealand</span>
-    <h1>Apps built to<br><span class="animated-word">work harder</span><br>for your business.</h1>
-    <p>Custom internal tools and web apps that help growing organisations run smoother, move faster, and do more of what matters.</p>
-    <div class="hero-actions">
-      <a href="#contact" class="btn-primary">Start a conversation</a>
-      <a href="#work" class="btn-secondary">See my work</a>
-    </div>
-    <div class="hero-scroll">
-      <div class="scroll-line"></div>
-    </div>
-  </section>
+<!-- SERVICES -->
+<section id="services">
+<div class="container">
+<p class="section-eyebrow">What I do</p>
+<h2 class="section-title">Built for how<br>you actually work.</h2>
+<p class="section-sub">Off-the-shelf software almost fits. I build tools that fit exactly — designed around your team, your workflow, and your goals.</p>
+<div class="services-grid">
+<div class="service-card">
+<div class="service-icon">⚙️</div>
+<h3>Internal Tools</h3>
+<p>Custom dashboards, management systems, and automation that replace the spreadsheets and manual processes slowing your team down.</p>
+</div>
+<div class="service-card">
+<div class="service-icon">🌐</div>
+<h3>Web Apps</h3>
+<p>Fast, modern web applications built with the latest technology — designed to scale with you from day one.</p>
+</div>
+<div class="service-card">
+<div class="service-icon">🏛️</div>
+<h3>Churches & Nonprofits</h3>
+<p>I understand the unique needs of community organisations. Member management, event tools, giving systems — built with care.</p>
+</div>
+<div class="service-card">
+<div class="service-icon">🚀</div>
+<h3>Ongoing Support</h3>
+<p>A long-term partner, not a one-off contractor. I stay involved, iterate, and help your tools grow as your organisation does.</p>
+</div>
+</div>
+</div>
+</section>
 
-  <!-- SERVICES -->
-  <section id="services">
-    <div class="container">
-      <p class="section-eyebrow">What I do</p>
-      <h2 class="section-title">Built for how<br>you actually work.</h2>
-      <p class="section-sub">Off-the-shelf software almost fits. I build tools that fit exactly — designed around your team, your workflow, and your goals.</p>
+<!-- PROCESS -->
+<section id="process">
+<div class="container">
+<p class="section-eyebrow">How I work</p>
+<h2 class="section-title">Simple process.<br>Real results.</h2>
+<p class="section-sub">No jargon, no surprises. Just clear communication and software that actually gets shipped.</p>
+<div class="process-steps">
+<div class="process-step">
+<span class="step-num">01</span>
+<div class="step-content">
+<h3>Listen first</h3>
+<p>Before writing a single line of code, I want to understand your organisation — your pain points, your team, and what success looks like for you.</p>
+</div>
+</div>
+<div class="process-step">
+<span class="step-num">02</span>
+<div class="step-content">
+<h3>Scope & propose</h3>
+<p>You get a clear proposal with scope, timeline, and cost. No vague estimates. No scope creep surprises.</p>
+</div>
+</div>
+<div class="process-step">
+<span class="step-num">03</span>
+<div class="step-content">
+<h3>Build in the open</h3>
+<p>I share progress regularly so you're never left wondering. You'll see the app taking shape and can give feedback as we go.</p>
+</div>
+</div>
+<div class="process-step">
+<span class="step-num">04</span>
+<div class="step-content">
+<h3>Ship & support</h3>
+<p>Launch day is just the beginning. I stick around to make sure everything works and to keep improving what we've built together.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
 
-      <div class="services-grid">
-        <div class="service-card">
-          <div class="service-icon">⚙️</div>
-          <h3>Internal Tools</h3>
-          <p>Custom dashboards, management systems, and automation that replace the spreadsheets and manual processes slowing your team down.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🌐</div>
-          <h3>Web Apps</h3>
-          <p>Fast, modern web applications built with the latest technology — designed to scale with you from day one.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🏛️</div>
-          <h3>Churches & Nonprofits</h3>
-          <p>I understand the unique needs of community organisations. Member management, event tools, giving systems — built with care.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🚀</div>
-          <h3>Ongoing Support</h3>
-          <p>A long-term partner, not a one-off contractor. I stay involved, iterate, and help your tools grow as your organisation does.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+<!-- WORK -->
+<section id="work">
+<div class="container">
+<p class="section-eyebrow">Recent work</p>
+<h2 class="section-title">Solving real problems<br>for real people.</h2>
+<p class="section-sub">Every project starts with a genuine problem worth solving.</p>
+<div class="work-cards">
+<div class="work-card">
+<div class="work-info">
+<span class="work-tag">Church · Internal Tool</span>
+<h3>Community Care App</h3>
+<p>A community care team was running their entire operation — recipients, agencies, social workers, locations, and deliveries — off a single spreadsheet. Duplicated rows, no backups, no automation. Hours lost every day just keeping the data intact.</p>
+<p>I rebuilt it as a proper web app: clean relational data, automated delivery scheduling, onboarding forms for new agencies and social workers, and a stats dashboard showing deliveries, recipients, and agency reach at a glance. They also gained a group events system with check-in.</p>
+<div class="work-outcome">
+<div class="outcome-item"><span class="outcome-dot"></span>Hours saved from daily admin — redirected to reaching more people</div>
+<div class="outcome-item"><span class="outcome-dot"></span>Delivery process fully automated, response times significantly faster</div>
+<div class="outcome-item"><span class="outcome-dot"></span>Replaced a fragile single spreadsheet with a reliable, scalable system</div>
+</div>
+</div>
+<div class="work-visual" aria-hidden="true">
+<div class="mock-card">
+<div class="mock-bar blue"></div>
+<div class="mock-bar short"></div>
+</div>
+<div class="mock-bar mid"></div>
+<div class="mock-bar short"></div>
+<div class="mock-card">
+<div class="mock-bar"></div>
+<div class="mock-bar short"></div>
+</div>
+</div>
+</div>
+<div class="work-card">
+<div class="work-info">
+<span class="work-tag">Church · Internal Tool</span>
+<h3>Church Growth & Stats App</h3>
+<p>The leadership team had no reliable way to track the health of their congregation over time. Attendance data lived in Planning Center but there was no way to slice it by location, age group, or discipleship stage — let alone spot trends.</p>
+<p>I built a stats dashboard integrated with Planning Center that gives leaders a live view of congregation health: attendance by location, age group breakdowns, and progress through key milestones like Gateway, baptisms, and courses. Graphs surface patterns and trends that were previously invisible.</p>
+<div class="work-outcome">
+<div class="outcome-item"><span class="outcome-dot"></span>Leadership can now see congregation health at a glance across all locations</div>
+<div class="outcome-item"><span class="outcome-dot"></span>Attendance trends and patterns visible for the first time</div>
+<div class="outcome-item"><span class="outcome-dot"></span>Integrates directly with Planning Center — no double entry</div>
+</div>
+</div>
+<div class="work-visual" aria-hidden="true">
+<div class="mock-card">
+<div class="mock-bar blue"></div>
+<div class="mock-bar mid"></div>
+</div>
+<div class="mock-bar short"></div>
+<div class="mock-card">
+<div class="mock-bar"></div>
+<div class="mock-bar short"></div>
+</div>
+<div class="mock-bar mid"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
 
-  <!-- PROCESS -->
-  <section id="process">
-    <div class="container">
-      <p class="section-eyebrow">How I work</p>
-      <h2 class="section-title">Simple process.<br>Real results.</h2>
-      <p class="section-sub">No jargon, no surprises. Just clear communication and software that actually gets shipped.</p>
+<!-- SAAS / COMING SOON -->
+<section id="saas">
+<div class="container">
+<p class="section-eyebrow">What's next</p>
+<h2 class="section-title">Products in the works.</h2>
+<p class="section-sub">Alongside client work, I'm building software products designed for organisations who need powerful tools without enterprise price tags.</p>
+<div class="saas-cards">
+<div class="saas-card">
+<p class="saas-label">In development</p>
+<h3>ProgrammeHQ</h3>
+<p>A platform for running holiday clubs, before and after school care, and events — programme planning, activity scheduling, budgeting, and staff coordination in one place. Built for any organisation running structured programmes.</p>
+</div>
+<div class="saas-card">
+<p class="saas-label">In development</p>
+<h3>Service Planner</h3>
+<p>A calm, simple tool for churches to plan services, manage run sheets, roster volunteers, and handle call times — without the complexity of bigger platforms.</p>
+</div>
+<div class="saas-card">
+<p class="saas-label">In mind</p>
+<h3>Your idea?</h3>
+<p>If you've got a recurring problem in your industry and think there's a software product waiting to be built — let's talk.</p>
+</div>
+</div>
+</div>
+</section>
 
-      <div class="process-steps">
-        <div class="process-step">
-          <span class="step-num">01</span>
-          <div class="step-content">
-            <h3>Listen first</h3>
-            <p>Before writing a single line of code, I want to understand your organisation — your pain points, your team, and what success looks like for you.</p>
-          </div>
-        </div>
-        <div class="process-step">
-          <span class="step-num">02</span>
-          <div class="step-content">
-            <h3>Scope & propose</h3>
-            <p>You get a clear proposal with scope, timeline, and cost. No vague estimates. No scope creep surprises.</p>
-          </div>
-        </div>
-        <div class="process-step">
-          <span class="step-num">03</span>
-          <div class="step-content">
-            <h3>Build in the open</h3>
-            <p>I share progress regularly so you're never left wondering. You'll see the app taking shape and can give feedback as we go.</p>
-          </div>
-        </div>
-        <div class="process-step">
-          <span class="step-num">04</span>
-          <div class="step-content">
-            <h3>Ship & support</h3>
-            <p>Launch day is just the beginning. I stick around to make sure everything works and to keep improving what we've built together.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+<!-- CONTACT -->
+<section id="contact">
+<div class="container">
+<div class="contact-box">
+<h2>Let's build something together.</h2>
+<p>Whether you have a clear brief or just a problem worth solving,<br>I'd love to hear from you.</p>
+<a href="mailto:jono@solvo.nz" class="contact-email">jono@solvo.nz</a>
+<br>
+<a href="mailto:jono@solvo.nz" class="btn-primary">Send me a message</a>
+</div>
+</div>
+</section>
 
-  <!-- WORK -->
-  <section id="work">
-    <div class="container">
-      <p class="section-eyebrow">Recent work</p>
-      <h2 class="section-title">Solving real problems<br>for real people.</h2>
-      <p class="section-sub">Every project starts with a genuine problem worth solving.</p>
-
-      <div class="work-cards">
-
-        <div class="work-card">
-          <div class="work-info">
-            <span class="work-tag">Church · Internal Tool</span>
-            <h3>Community Care App</h3>
-            <p>A community care team was running their entire operation — recipients, agencies, social workers, locations, and deliveries — off a single spreadsheet. Duplicated rows, no backups, no automation. Hours lost every day just keeping the data intact.</p>
-            <p>I rebuilt it as a proper web app: clean relational data, automated delivery scheduling, onboarding forms for new agencies and social workers, and a stats dashboard showing deliveries, recipients, and agency reach at a glance. They also gained a group events system with check-in.</p>
-            <div class="work-outcome">
-              <div class="outcome-item"><span class="outcome-dot"></span>Hours saved from daily admin — redirected to reaching more people</div>
-              <div class="outcome-item"><span class="outcome-dot"></span>Delivery process fully automated, response times significantly faster</div>
-              <div class="outcome-item"><span class="outcome-dot"></span>Replaced a fragile single spreadsheet with a reliable, scalable system</div>
-            </div>
-          </div>
-          <div class="work-visual" aria-hidden="true">
-            <div class="mock-card">
-              <div class="mock-bar blue"></div>
-              <div class="mock-bar short"></div>
-            </div>
-            <div class="mock-bar mid"></div>
-            <div class="mock-bar short"></div>
-            <div class="mock-card">
-              <div class="mock-bar"></div>
-              <div class="mock-bar short"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="work-card">
-          <div class="work-info">
-            <span class="work-tag">Church · Internal Tool</span>
-            <h3>Church Growth & Stats App</h3>
-            <p>The leadership team had no reliable way to track the health of their congregation over time. Attendance data lived in Planning Center but there was no way to slice it by location, age group, or discipleship stage — let alone spot trends.</p>
-            <p>I built a stats dashboard integrated with Planning Center that gives leaders a live view of congregation health: attendance by location, age group breakdowns, and progress through key milestones like Gateway, baptisms, and courses. Graphs surface patterns and trends that were previously invisible.</p>
-            <div class="work-outcome">
-              <div class="outcome-item"><span class="outcome-dot"></span>Leadership can now see congregation health at a glance across all locations</div>
-              <div class="outcome-item"><span class="outcome-dot"></span>Attendance trends and patterns visible for the first time</div>
-              <div class="outcome-item"><span class="outcome-dot"></span>Integrates directly with Planning Center — no double entry</div>
-            </div>
-          </div>
-          <div class="work-visual" aria-hidden="true">
-            <div class="mock-card">
-              <div class="mock-bar blue"></div>
-              <div class="mock-bar mid"></div>
-            </div>
-            <div class="mock-bar short"></div>
-            <div class="mock-card">
-              <div class="mock-bar"></div>
-              <div class="mock-bar short"></div>
-            </div>
-            <div class="mock-bar mid"></div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- SAAS / COMING SOON -->
-  <section id="saas">
-    <div class="container">
-      <p class="section-eyebrow">What's next</p>
-      <h2 class="section-title">Products in the works.</h2>
-      <p class="section-sub">Alongside client work, I'm building software products designed for organisations who need powerful tools without enterprise price tags.</p>
-
-      <div class="saas-cards">
-        <div class="saas-card">
-          <p class="saas-label">In development</p>
-          <h3>ProgrammeHQ</h3>
-          <p>A platform for running holiday clubs, before and after school care, and events — programme planning, activity scheduling, budgeting, and staff coordination in one place. Built for any organisation running structured programmes.</p>
-        </div>
-        <div class="saas-card">
-          <p class="saas-label">In development</p>
-          <h3>Service Planner</h3>
-          <p>A calm, simple tool for churches to plan services, manage run sheets, roster volunteers, and handle call times — without the complexity of bigger platforms.</p>
-        </div>
-        <div class="saas-card">
-          <p class="saas-label">In mind</p>
-          <h3>Your idea?</h3>
-          <p>If you've got a recurring problem in your industry and think there's a software product waiting to be built — let's talk.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="contact">
-    <div class="container">
-      <div class="contact-box">
-        <h2>Let's build something together.</h2>
-        <p>Whether you have a clear brief or just a problem worth solving,<br>I'd love to hear from you.</p>
-        <a href="mailto:duffsstudio@gmail.com" class="contact-email">duffsstudio@gmail.com</a>
-        <br>
-        <a href="mailto:duffsstudio@gmail.com" class="btn-primary">Send me a message</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <p>© 2026 Duffs Studio. New Zealand.</p>
-    <a href="mailto:duffsstudio@gmail.com">duffsstudio@gmail.com</a>
-  </footer>
+<!-- FOOTER -->
+<footer>
+<p>© 2026 Solvo. New Zealand.</p>
+<a href="mailto:jono@solvo.nz">jono@solvo.nz</a>
+</footer>
 
 </body>
 </html>
